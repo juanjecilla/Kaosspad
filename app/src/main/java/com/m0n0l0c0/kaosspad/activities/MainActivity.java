@@ -3,30 +3,25 @@ package com.m0n0l0c0.kaosspad.activities;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.m0n0l0c0.kaosspad.R;
 import com.m0n0l0c0.kaosspad.base.BaseActivity;
+import com.m0n0l0c0.kaosspad.interfaces.OnAudioRecorderListener;
 
 import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements OnAudioRecorderListener {
+
+    @BindView(R.id.recycler_view) RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +33,6 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
     }
 
-    @OnClick({R.id.button1, R.id.button2})
     public void playAudio1(){
 
         RingtoneManager manager = new RingtoneManager(this);
@@ -73,5 +67,10 @@ public class MainActivity extends BaseActivity {
         });
 
         mediaPlayer.start();
+    }
+
+    @Override
+    public void onAudioRecorded(String absolutePath) {
+
     }
 }
