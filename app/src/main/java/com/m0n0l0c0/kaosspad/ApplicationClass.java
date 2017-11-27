@@ -4,14 +4,14 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import com.m0n0l0c0.kaosspad.dagger.DaggerModule;
+import com.m0n0l0c0.kaosspad.dagger.MainModule;
+import com.m0n0l0c0.kaosspad.dagger.components.DaggerMainComponent;
+import com.m0n0l0c0.kaosspad.dagger.components.MainComponent;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
-import java.util.List;
-
-import dagger.ObjectGraph;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by juanje on 14/10/17.
@@ -20,7 +20,7 @@ import dagger.ObjectGraph;
 public class ApplicationClass extends Application {
 
     // The Dagger ObjectGraph
-    private ObjectGraph objectGraph;
+    private MainComponent mainComponent;
 
     private static ApplicationClass instance;
 
@@ -32,8 +32,13 @@ public class ApplicationClass extends Application {
 
         instance = this;
 
-        // Configure the graph for dagger
-        objectGraph = ObjectGraph.create(getModules().toArray());
+        mainComponent = DaggerMainComponent.builder()
+                .mainModule(new MainModule(this))
+                .build();
+
+        Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+        Realm.setDefaultConfiguration(config);
 
 //        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
 //                .setDefaultFontPath("fonts/Raleway-Regular.ttf")
@@ -48,13 +53,7 @@ public class ApplicationClass extends Application {
         MultiDex.install(this);
     }
 
-    protected List<DaggerModule> getModules() {
-        return Arrays.asList(
-                new DaggerModule(this)
-        );
-    }
-
-    public static void injectMember(Object object) {
-        instance.objectGraph.inject(object);
+    public MainComponent getComponent() {
+        return mainComponent;
     }
 }
